@@ -1,4 +1,4 @@
-import { BaseEntity, Timestamp } from "@ai-boilerplate/shared";
+import type { BaseEntity, Timestamp } from "@ai-boilerplate/shared";
 
 export type UserRole = "admin" | "editor" | "viewer";
 

@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -e
+
+# Format and lint staged files, re-stage any changes
+if git diff --cached --name-only | grep -q .; then
+  npx @biomejs/biome check --write --staged .
+  git update-index --again
+fi
+
+# Typecheck all workspaces
+npm run typecheck
+
+# Run tests across all workspaces
+npm run test

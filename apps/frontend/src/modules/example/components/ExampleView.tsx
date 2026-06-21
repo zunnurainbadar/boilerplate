@@ -1,7 +1,7 @@
-import { useExample } from "../hooks/useExample";
 import { SubmitButton } from "@/components/common/SubmitButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useExample } from "../hooks/useExample";
 
 export function ExampleView() {
   const { examples, loading, error, createExample } = useExample();

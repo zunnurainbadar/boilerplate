@@ -1,4 +1,4 @@
-import { BaseEntity } from "@ai-boilerplate/shared";
+import type { BaseEntity } from "@ai-boilerplate/shared";
 
 export interface ExampleDTO extends BaseEntity {
   name: string;

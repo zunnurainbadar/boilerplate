@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import { ExampleView } from "./modules/example/components/ExampleView";
 
 export function App() {
@@ -14,10 +14,7 @@ export function App() {
       </nav>
 
       <Routes>
-        <Route
-          path="/"
-          element={<h1 className="text-2xl font-bold">Welcome to AI Boilerplate</h1>}
-        />
+        <Route path="/" element={<h1 className="text-2xl font-bold">Welcome to AI Boilerplate</h1>} />
         <Route path="/examples" element={<ExampleView />} />
       </Routes>
     </div>

@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { chunk, unique, shuffle, groupBy, range, first, last } from "./array";
+import { describe, expect, it } from "vitest";
+import { chunk, first, groupBy, last, range, shuffle, unique } from "./array";
 
 describe("chunk", () => {
   it("should split array into chunks of given size", () => {
@@ -55,7 +55,10 @@ describe("groupBy", () => {
     ];
     const result = groupBy(items, (x) => x.type);
     expect(result).toEqual({
-      a: [{ type: "a", value: 1 }, { type: "a", value: 3 }],
+      a: [
+        { type: "a", value: 1 },
+        { type: "a", value: 3 },
+      ],
       b: [{ type: "b", value: 2 }],
     });
   });

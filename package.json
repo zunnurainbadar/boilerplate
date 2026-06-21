@@ -1,10 +1,7 @@
 {
   "name": "ai-boilerplate",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     "dev:backend": "npm run dev -w apps/backend",
     "dev:frontend": "npm run dev -w apps/frontend",
@@ -18,15 +15,15 @@
     "test:utils": "npm run test -w packages/utils",
     "test:backend": "npm run test -w apps/backend",
     "test:frontend": "npm run test -w apps/frontend",
-    "lint": "eslint . --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit -p tsconfig.base.json"
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc -b",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "typescript": "^5.5.0",
+    "@biomejs/biome": "^1.9.4",
     "@types/node": "^20.14.0",
-    "eslint": "^8.57.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
-    "@typescript-eslint/parser": "^7.13.0",
-    "prettier": "^3.3.0"
+    "husky": "^9.1.7",
+    "typescript": "^5.5.0"
   }
 }

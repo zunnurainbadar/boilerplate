@@ -1,6 +1,6 @@
-import { Result, AppError, NotFoundError, ValidationError } from "@ai-boilerplate/shared";
-import { User, UserRole } from "../models/users.model";
-import { UserRepository } from "../repositories/users.repository";
+import { type AppError, NotFoundError, Result, ValidationError } from "@ai-boilerplate/shared";
+import { User, type UserRole } from "../models/users.model";
+import type { UserRepository } from "../repositories/users.repository";
 
 export class UserService {
   constructor(private readonly repository: UserRepository) {}

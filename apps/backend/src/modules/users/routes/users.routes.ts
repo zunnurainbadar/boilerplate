@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction, Router } from "express";
-import { UserService } from "../services/users.service";
-import { UserRepository } from "../repositories/users.repository";
+import { type NextFunction, type Request, type Response, Router } from "express";
 import { getPool } from "../../../db/pool";
+import { UserRepository } from "../repositories/users.repository";
+import { UserService } from "../services/users.service";
 
 const repository = new UserRepository(getPool());
 const service = new UserService(repository);

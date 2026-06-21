@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { capitalize, truncate, slugify, toTitleCase, isEmpty, isNotEmpty } from "./string";
+import { describe, expect, it } from "vitest";
+import { capitalize, isEmpty, isNotEmpty, slugify, toTitleCase, truncate } from "./string";
 
 describe("capitalize", () => {
   it("should capitalize the first letter and lowercase the rest", () => {

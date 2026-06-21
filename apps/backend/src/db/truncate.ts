@@ -1,5 +1,5 @@
-import { Pool } from "pg";
-import { getPool, closePool } from "./pool";
+import type { Pool } from "pg";
+import { closePool, getPool } from "./pool";
 
 let pool: Pool;
 

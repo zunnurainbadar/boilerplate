@@ -1,6 +1,6 @@
-import { Result, AppError, NotFoundError, ValidationError } from "@ai-boilerplate/shared";
+import { type AppError, NotFoundError, Result, ValidationError } from "@ai-boilerplate/shared";
 import { Example } from "../models/example.model";
-import { ExampleRepository } from "../repositories/example.repository";
+import type { ExampleRepository } from "../repositories/example.repository";
 
 export class ExampleService {
   constructor(private readonly repository: ExampleRepository) {}

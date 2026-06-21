@@ -1,6 +1,6 @@
-import { Pool } from "pg";
-import { Nullable, Result, AppError, NotFoundError } from "@ai-boilerplate/shared";
-import { Example, ExampleProps } from "../models/example.model";
+import { type AppError, NotFoundError, type Nullable, Result } from "@ai-boilerplate/shared";
+import type { Pool } from "pg";
+import { Example, type ExampleProps } from "../models/example.model";
 
 interface ExampleRow {
   id: string;

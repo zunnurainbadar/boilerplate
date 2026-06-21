@@ -1,6 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
 import { getPool } from "./pool";
-import fs from "fs";
-import path from "path";
 
 export async function runMigrations(): Promise<void> {
   const pool = getPool();
@@ -14,7 +14,10 @@ export async function runMigrations(): Promise<void> {
   `);
 
   const dir = path.join(__dirname, "migrations");
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".sql"))
+    .sort();
 
   for (const file of files) {
     const { rows } = await pool.query("SELECT 1 FROM migrations WHERE name = $1", [file]);

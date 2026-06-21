@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction, Router } from "express";
-import { ExampleService } from "../services/example.service";
-import { ExampleRepository } from "../repositories/example.repository";
+import { type NextFunction, type Request, type Response, Router } from "express";
 import { getPool } from "../../../db/pool";
+import { ExampleRepository } from "../repositories/example.repository";
+import { ExampleService } from "../services/example.service";
 
 const repository = new ExampleRepository(getPool());
 const service = new ExampleService(repository);

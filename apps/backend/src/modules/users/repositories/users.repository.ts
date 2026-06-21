@@ -1,6 +1,6 @@
-import { Pool } from "pg";
-import { Nullable, Result, AppError, NotFoundError } from "@ai-boilerplate/shared";
-import { User, UserProps, UserRole } from "../models/users.model";
+import { type AppError, NotFoundError, type Nullable, Result } from "@ai-boilerplate/shared";
+import type { Pool } from "pg";
+import { User, type UserProps, type UserRole } from "../models/users.model";
 
 interface UserRow {
   id: string;

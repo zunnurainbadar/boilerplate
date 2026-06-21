@@ -293,7 +293,8 @@ When adding a new domain module (e.g., "products"), create these files:
 | Run shared tests | `npm run test:shared` |
 | Run utils tests | `npm run test:utils` |
 | Typecheck all | `npm run typecheck` |
-| Lint all | `npm run lint` |
+| Lint all | `npm run lint` (Biome) |
+| Format all | `npm run format` (Biome) |
 
 ---
 

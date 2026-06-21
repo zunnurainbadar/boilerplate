@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { capitalize, chunk, pick } from "@ai-boilerplate/utils";
 import { Result } from "@ai-boilerplate/shared";
+import { capitalize, chunk, pick } from "@ai-boilerplate/utils";
+import { describe, expect, it } from "vitest";
 
 describe("package integration smoke tests", () => {
   it("capitalize from utils works", () => {

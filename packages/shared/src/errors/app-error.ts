@@ -22,9 +22,7 @@ export class AppError extends Error {
 
 export class NotFoundError extends AppError {
   constructor(resource: string, id?: string) {
-    const message = id
-      ? `${resource} with id '${id}' not found`
-      : `${resource} not found`;
+    const message = id ? `${resource} with id '${id}' not found` : `${resource} not found`;
     super(message, 404, "NOT_FOUND");
     this.name = "NotFoundError";
     Object.setPrototypeOf(this, NotFoundError.prototype);
@@ -40,7 +38,7 @@ export class ValidationError extends AppError {
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message: string = "Unauthorized") {
+  constructor(message = "Unauthorized") {
     super(message, 401, "UNAUTHORIZED");
     this.name = "UnauthorizedError";
     Object.setPrototypeOf(this, UnauthorizedError.prototype);

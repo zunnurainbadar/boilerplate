@@ -20,10 +20,7 @@ export function shuffle<T>(array: T[]): T[] {
   return copy;
 }
 
-export function groupBy<T, K extends string | number>(
-  array: T[],
-  keyFn: (item: T) => K,
-): Record<K, T[]> {
+export function groupBy<T, K extends string | number>(array: T[], keyFn: (item: T) => K): Record<K, T[]> {
   return array.reduce(
     (acc, item) => {
       const key = keyFn(item);

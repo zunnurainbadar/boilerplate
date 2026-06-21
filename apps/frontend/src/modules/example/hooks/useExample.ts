@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { ExampleApi, ExampleDTO } from "../services/exampleApi";
+import { useCallback, useEffect, useState } from "react";
+import { ExampleApi, type ExampleDTO } from "../services/exampleApi";
 
 const api = new ExampleApi();
 

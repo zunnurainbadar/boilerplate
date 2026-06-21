@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { pick, omit, deepClone, isEmptyObject, mergeObjects, isPlainObject } from "./object";
+import { describe, expect, it } from "vitest";
+import { deepClone, isEmptyObject, isPlainObject, mergeObjects, omit, pick } from "./object";
 
 describe("pick", () => {
   it("should pick specified keys", () => {

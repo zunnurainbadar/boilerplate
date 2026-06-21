@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { UserService } from "./users.service";
-import { UserRepository } from "../repositories/users.repository";
+import { beforeEach, describe, expect, it } from "vitest";
 import { getPool } from "../../../db/pool";
+import { UserRepository } from "../repositories/users.repository";
+import { UserService } from "./users.service";
 
 describe("UserService", () => {
   let service: UserService;

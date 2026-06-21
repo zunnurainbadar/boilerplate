@@ -3,7 +3,7 @@ export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-export function truncate(str: string, maxLength: number, suffix: string = "..."): string {
+export function truncate(str: string, maxLength: number, suffix = "..."): string {
   if (!str) return "";
   if (str.length <= maxLength) return str;
   return str.slice(0, maxLength - suffix.length) + suffix;

@@ -1,7 +1,4 @@
-export function pick<T extends Record<string, unknown>, K extends keyof T>(
-  obj: T,
-  keys: K[],
-): Pick<T, K> {
+export function pick<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
   return keys.reduce(
     (acc, key) => {
       if (key in obj) acc[key] = obj[key];
@@ -11,10 +8,7 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
   );
 }
 
-export function omit<T extends Record<string, unknown>, K extends keyof T>(
-  obj: T,
-  keys: K[],
-): Omit<T, K> {
+export function omit<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
   const keySet = new Set(keys);
   return Object.keys(obj).reduce(
     (acc, key) => {
@@ -35,9 +29,7 @@ export function isEmptyObject(obj: Record<string, unknown>): boolean {
   return Object.keys(obj).length === 0;
 }
 
-export function mergeObjects<T extends Record<string, unknown>>(
-  ...objects: Partial<T>[]
-): T {
+export function mergeObjects<T extends Record<string, unknown>>(...objects: Partial<T>[]): T {
   return Object.assign({}, ...objects) as T;
 }
 

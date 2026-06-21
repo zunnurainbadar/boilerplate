@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { AppError, NotFoundError, ValidationError, UnauthorizedError } from "./app-error";
+import { describe, expect, it } from "vitest";
+import { AppError, NotFoundError, UnauthorizedError, ValidationError } from "./app-error";
 
 describe("AppError", () => {
   it("should create with defaults", () => {
