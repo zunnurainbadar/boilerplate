@@ -123,14 +123,16 @@ exampleRoutes.post("/", async (req, res, next) => {
 });
 ```
 
-#### Database: PostgreSQL
+#### Database: PostgreSQL + Drizzle ORM
 
+- **ORM:** Drizzle ORM (`drizzle-orm`) for schema definitions and migrations. Schema is defined in `src/db/schema.ts`.
 - **Driver:** `pg` (node-postgres) with a connection pool (`src/db/pool.ts`).
 - **Pool:** Singleton via `getPool()`. Uses `DATABASE_URL` from `.env`. Max 10 connections.
-- **Migrations:** SQL files in `src/db/migrations/` named `001_xxx.sql`, `002_xxx.sql` applied in order on startup via `src/db/migrate.ts`. Tracks applied migrations in a `migrations` table.
+- **Migrations:** Run on startup via `src/db/migrate.ts` using Drizzle's `migrate()`. SQL migrations are auto-generated in `drizzle/` folder. The migration runner also bootstraps the database if it does not exist.
+- **Generating migrations:** Run `npm run db:generate -w apps/backend` after editing `src/db/schema.ts`. Commit the generated SQL files.
 - **Environment:** Copy `apps/backend/.env.example` to `.env` and set `DATABASE_URL`. Use `docker-compose.yml` (root) to spin up Postgres: `docker compose up -d`.
 - **Local setup:** `docker compose up -d` → `npm run dev:backend` (migrations run automatically on startup).
-- **Adding a migration:** Create a new file `src/db/migrations/003_xxx.sql` with raw SQL. The migration runner picks it up on next restart.
+- **Repositories still use raw SQL** via `this.pool.query()`. Drizzle is used for schema/migrations only — not for query building in repositories.
 
 ### Frontend (apps/frontend)
 
@@ -295,6 +297,8 @@ When adding a new domain module (e.g., "products"), create these files:
 | Typecheck all | `npm run typecheck` |
 | Lint all | `npm run lint` (Biome) |
 | Format all | `npm run format` (Biome) |
+| Generate migration | `npm run db:generate` |
+| Start production | `npm run start` |
 
 ---
 
@@ -330,7 +334,7 @@ When adding a new domain module (e.g., "products"), create these files:
 ## Constraints
 
 - Do NOT introduce new top-level workspaces without discussion.
-- Do NOT add ORMs — use raw SQL via `pg`.
+- Do NOT add ORMs beyond Drizzle — repositories use raw SQL via `pg`.
 - Do NOT change the module file structure (models/repositories/services/routes).
 - Do NOT create controller classes — routes call services directly.
 - Do NOT expose database rows outside repositories — always map to domain objects via `reconstitute()`.

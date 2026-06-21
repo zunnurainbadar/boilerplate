@@ -1,33 +1,43 @@
-import fs from "node:fs";
 import path from "node:path";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { Client } from "pg";
 import { getPool } from "./pool";
 
-export async function runMigrations(): Promise<void> {
-  const pool = getPool();
+async function bootstrap(): Promise<void> {
+  const databaseUrl = process.env.DATABASE_URL ?? "postgresql://localhost:5432/ai_boilerplate";
+  const url = new URL(databaseUrl);
+  const targetDb = url.pathname.replace("/", "");
 
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS migrations (
-      id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL UNIQUE,
-      run_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
+  if (!targetDb) return;
 
-  const dir = path.join(__dirname, "migrations");
-  const files = fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".sql"))
-    .sort();
+  url.pathname = "/postgres";
+  const adminUrl = url.toString();
 
-  for (const file of files) {
-    const { rows } = await pool.query("SELECT 1 FROM migrations WHERE name = $1", [file]);
-    if (rows.length > 0) continue;
+  const client = new Client({ connectionString: adminUrl });
 
-    const sql = fs.readFileSync(path.join(dir, file), "utf-8");
-    await pool.query(sql);
-    await pool.query("INSERT INTO migrations (name) VALUES ($1)", [file]);
-    console.log(`Migration applied: ${file}`);
+  try {
+    await client.connect();
+    const { rows } = await client.query("SELECT 1 FROM pg_database WHERE datname = $1", [targetDb]);
+
+    if (rows.length === 0) {
+      await client.query(`CREATE DATABASE "${targetDb}"`);
+      console.log(`Database "${targetDb}" created`);
+    }
+  } finally {
+    await client.end();
   }
+}
+
+export async function runMigrations(): Promise<void> {
+  await bootstrap();
+
+  const pool = getPool();
+  const db = drizzle(pool);
+
+  const migrationsFolder = path.join(__dirname, "..", "..", "migrations");
+
+  await migrate(db, { migrationsFolder });
 
   console.log("Migrations complete");
 }
