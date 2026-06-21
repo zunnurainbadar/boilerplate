@@ -1,0 +1,32 @@
+{
+  "name": "ai-boilerplate",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev -w apps/backend",
+    "dev:frontend": "npm run dev -w apps/frontend",
+    "build:shared": "npm run build -w packages/shared",
+    "build:utils": "npm run build -w packages/utils",
+    "build:backend": "npm run build -w apps/backend",
+    "build:frontend": "npm run build -w apps/frontend",
+    "build": "npm run build:shared && npm run build:utils && npm run build:backend && npm run build:frontend",
+    "test": "npm run test --workspaces --if-present",
+    "test:shared": "npm run test -w packages/shared",
+    "test:utils": "npm run test -w packages/utils",
+    "test:backend": "npm run test -w apps/backend",
+    "test:frontend": "npm run test -w apps/frontend",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit -p tsconfig.base.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "prettier": "^3.3.0"
+  }
+}

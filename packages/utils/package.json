@@ -1,0 +1,19 @@
+{
+  "name": "@ai-boilerplate/utils",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@ai-boilerplate/shared": "*"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
