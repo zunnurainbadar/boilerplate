@@ -1,9 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from "express";
-import { getPool } from "../../../db/pool";
 import { ExampleRepository } from "../repositories/example.repository";
 import { ExampleService } from "../services/example.service";
 
-const repository = new ExampleRepository(getPool());
+const repository = new ExampleRepository();
 const service = new ExampleService(repository);
 
 export const exampleRoutes = Router();

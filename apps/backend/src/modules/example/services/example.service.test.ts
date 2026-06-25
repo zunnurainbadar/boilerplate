@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getPool } from "../../../db/pool";
 import { ExampleRepository } from "../repositories/example.repository";
 import { ExampleService } from "./example.service";
 
@@ -7,7 +6,7 @@ describe("ExampleService", () => {
   let service: ExampleService;
 
   beforeEach(() => {
-    service = new ExampleService(new ExampleRepository(getPool()));
+    service = new ExampleService(new ExampleRepository());
   });
 
   describe("create", () => {
@@ -56,7 +55,7 @@ describe("ExampleService", () => {
     });
 
     it("should return empty array when no examples", async () => {
-      const svc = new ExampleService(new ExampleRepository(getPool()));
+      const svc = new ExampleService(new ExampleRepository());
       const result = await svc.getAll();
       expect(result.isSuccess).toBe(true);
       expect(result.value).toHaveLength(0);

@@ -1,5 +1,5 @@
 import { type AppError, NotFoundError, type Nullable, Result } from "@ai-boilerplate/shared";
-import type { Pool } from "pg";
+import { db } from "../../../db/crud";
 import { Example, type ExampleProps } from "../models/example.model";
 
 interface ExampleRow {
@@ -8,47 +8,44 @@ interface ExampleRow {
   description: string;
   created_at: string;
   updated_at: string;
+  [key: string]: unknown;
 }
 
 export class ExampleRepository {
-  constructor(private readonly pool: Pool) {}
-
   async findById(id: string): Promise<Nullable<Example>> {
-    const { rows } = await this.pool.query<ExampleRow>(
-      "SELECT id, name, description, created_at, updated_at FROM examples WHERE id = $1",
-      [id],
-    );
-    if (rows.length === 0) return null;
-    return this.toDomain(rows[0]);
+    const row = await db.findById<ExampleRow>("examples", id);
+    if (!row) return null;
+    return this.toDomain(row);
   }
 
   async findAll(): Promise<Example[]> {
-    const { rows } = await this.pool.query<ExampleRow>(
-      "SELECT id, name, description, created_at, updated_at FROM examples ORDER BY created_at DESC",
-    );
+    const rows = await db.findAll<ExampleRow>("examples");
     return rows.map((r) => this.toDomain(r));
   }
 
   async save(example: Example): Promise<Example> {
-    const props = example.toJSON();
-    await this.pool.query(
-      `INSERT INTO examples (id, name, description, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (id) DO UPDATE SET
-         name = EXCLUDED.name,
-         description = EXCLUDED.description,
-         updated_at = EXCLUDED.updated_at`,
-      [props.id, props.name, props.description, props.createdAt, props.updatedAt],
-    );
+    const row = this.toRow(example);
+    await db.upsert("examples", row);
     return example;
   }
 
   async delete(id: string): Promise<Result<void, AppError>> {
-    const { rowCount } = await this.pool.query("DELETE FROM examples WHERE id = $1", [id]);
-    if (rowCount === 0) {
+    const count = await db.remove("examples", id);
+    if (count === 0) {
       return Result.failure(new NotFoundError("Example", id));
     }
     return Result.success(undefined);
+  }
+
+  private toRow(example: Example): ExampleRow {
+    const props = example.toJSON();
+    return {
+      id: props.id,
+      name: props.name,
+      description: props.description,
+      created_at: props.createdAt,
+      updated_at: props.updatedAt,
+    };
   }
 
   private toDomain(row: ExampleRow): Example {

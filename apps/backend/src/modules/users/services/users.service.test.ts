@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getPool } from "../../../db/pool";
 import { UserRepository } from "../repositories/users.repository";
 import { UserService } from "./users.service";
 
@@ -7,7 +6,7 @@ describe("UserService", () => {
   let service: UserService;
 
   beforeEach(() => {
-    service = new UserService(new UserRepository(getPool()));
+    service = new UserService(new UserRepository());
   });
 
   describe("create", () => {

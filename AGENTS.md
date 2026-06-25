@@ -80,32 +80,48 @@ export class Example implements BaseEntity {
 
 #### Repository Pattern
 
+Repositories convert domain objects to DB rows and vice versa. They delegate all actual CRUD to a single shared `src/db/crud.ts` utility — never write raw SQL in repositories.
+
 ```typescript
+interface ExampleRow {
+  id: string;
+  name: string;
+  [key: string]: unknown; // satisfies DbRow constraint
+}
+
 export class ExampleRepository {
-  constructor(private readonly pool: Pool) {}
+  // NO pool constructor — crud.ts handles the connection internally
 
   async findById(id: string): Promise<Nullable<Example>> {
-    const { rows } = await this.pool.query("SELECT * FROM examples WHERE id = $1", [id]);
-    if (rows.length === 0) return null;
-    return Example.reconstitute({ ...rows[0] }); // Maps snake_case DB row → domain object
+    const row = await db.findById<ExampleRow>("examples", id);
+    if (!row) return null;
+    return Example.reconstitute({ ...row }); // Maps snake_case DB row → domain object
   }
+
+  async save(example: Example): Promise<Example> {
+    const row = this.toRow(example);        // Domain → snake_case row
+    await db.upsert("examples", row);
+    return example;
+  }
+
+  private toRow(example: Example): ExampleRow { ... }    // Domain → DB row
+  private toDomain(row: ExampleRow): Example { ... }     // DB row → Domain
 }
 ```
 
-- Repositories receive `Pool` via constructor.
-- Execute raw SQL via `this.pool.query(...)`.
-- **Always return domain objects** — call `Model.reconstitute(row)` to map snake_case DB columns to domain entity.
-- Never expose raw DB rows (`pg.Result`, `RowType`) to the service layer.
-- Use `ON CONFLICT ... DO UPDATE` for upserts.
+- **Repositories receive NO pool.** The shared `db` util (`src/db/crud.ts`) uses `getPool()` internally.
+- Repositories **convert** domain ↔ DB row, then call `db.findById()`, `db.findAll()`, `db.upsert()`, `db.remove()`.
+- All SQL queries live in a single file: `src/db/crud.ts`. Changing the DB layer only requires editing that one file.
+- **Always return domain objects** — call `Model.reconstitute(row)` to map snake_case DB row to domain entity.
+- Row interfaces must include `[key: string]: unknown` to satisfy the `DbRow` constraint.
 
 #### Route Pattern (No Controllers)
 
 ```typescript
-import { getPool } from "../../../db/pool";
 import { ExampleService } from "../services/example.service";
 import { ExampleRepository } from "../repositories/example.repository";
 
-const repository = new ExampleRepository(getPool());
+const repository = new ExampleRepository();
 const service = new ExampleService(repository);
 
 export const exampleRoutes = Router();
@@ -123,16 +139,15 @@ exampleRoutes.post("/", async (req, res, next) => {
 });
 ```
 
-#### Database: PostgreSQL + Drizzle ORM
+#### Database: PostgreSQL + node-pg-migrate
 
-- **ORM:** Drizzle ORM (`drizzle-orm`) for schema definitions and migrations. Schema is defined in `src/db/schema.ts`.
+- **Migrations:** Use `node-pg-migrate` for all schema changes. Migrations live in `migrations/` as `.js` files with timestamp prefixes (e.g., `1782375848811_examples-and-users.js`). Create new migrations via `npx node-pg-migrate create <name>` in the backend workspace.
 - **Driver:** `pg` (node-postgres) with a connection pool (`src/db/pool.ts`).
 - **Pool:** Singleton via `getPool()`. Uses `DATABASE_URL` from `.env`. Max 10 connections.
-- **Migrations:** Run on startup via `src/db/migrate.ts` using Drizzle's `migrate()`. SQL migrations are auto-generated in `drizzle/` folder. The migration runner also bootstraps the database if it does not exist.
-- **Generating migrations:** Run `npm run db:generate -w apps/backend` after editing `src/db/schema.ts`. Commit the generated SQL files.
+- **Migration runner:** `src/db/migrate.ts` bootstraps the database (creates if not exists) then applies pending migrations on startup.
 - **Environment:** Copy `apps/backend/.env.example` to `.env` and set `DATABASE_URL`. Use `docker-compose.yml` (root) to spin up Postgres: `docker compose up -d`.
 - **Local setup:** `docker compose up -d` → `npm run dev:backend` (migrations run automatically on startup).
-- **Repositories still use raw SQL** via `this.pool.query()`. Drizzle is used for schema/migrations only — not for query building in repositories.
+- **Repositories:** All CRUD goes through repository classes (`XRepository`) that convert domain ↔ DB row and delegate to a single shared `src/db/crud.ts` utility. Repositories do NOT receive `Pool`. Never write queries in services or routes — every query lives in `src/db/crud.ts`. If the database layer changes, only that one file needs updating.
 
 ### Frontend (apps/frontend)
 
@@ -297,7 +312,7 @@ When adding a new domain module (e.g., "products"), create these files:
 | Typecheck all | `npm run typecheck` |
 | Lint all | `npm run lint` (Biome) |
 | Format all | `npm run format` (Biome) |
-| Generate migration | `npm run db:generate` |
+| Generate migration | `npx node-pg-migrate create <name>` (in apps/backend) |
 | Start production | `npm run start` |
 
 ---
@@ -334,7 +349,7 @@ When adding a new domain module (e.g., "products"), create these files:
 ## Constraints
 
 - Do NOT introduce new top-level workspaces without discussion.
-- Do NOT add ORMs beyond Drizzle — repositories use raw SQL via `pg`.
+- Do NOT add ORMs — repositories use raw SQL via `pg`. Migrations use `node-pg-migrate`.
 - Do NOT change the module file structure (models/repositories/services/routes).
 - Do NOT create controller classes — routes call services directly.
 - Do NOT expose database rows outside repositories — always map to domain objects via `reconstitute()`.

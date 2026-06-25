@@ -4,7 +4,6 @@
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     "start": "npm run start -w apps/backend & npm run start -w apps/frontend & wait",
-    "db:generate": "npm run db:generate -w apps/backend",
     "dev:backend": "npm run dev -w apps/backend",
     "dev:frontend": "npm run dev -w apps/frontend",
     "build:shared": "npm run build -w packages/shared",

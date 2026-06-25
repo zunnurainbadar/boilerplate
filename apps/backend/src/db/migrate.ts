@@ -1,8 +1,5 @@
 import path from "node:path";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Client } from "pg";
-import { getPool } from "./pool";
 
 async function bootstrap(): Promise<void> {
   const databaseUrl = process.env.DATABASE_URL ?? "postgresql://localhost:5432/ai_boilerplate";
@@ -32,12 +29,20 @@ async function bootstrap(): Promise<void> {
 export async function runMigrations(): Promise<void> {
   await bootstrap();
 
-  const pool = getPool();
-  const db = drizzle(pool);
+  const databaseUrl = process.env.DATABASE_URL ?? "postgresql://localhost:5432/ai_boilerplate";
+  const { runner } = await import("node-pg-migrate");
 
-  const migrationsFolder = path.join(__dirname, "..", "..", "migrations");
+  const migrations = await runner({
+    databaseUrl,
+    migrationsTable: "pgmigrations",
+    dir: path.join(__dirname, "..", "..", "migrations"),
+    direction: "up",
+    migrationsSchema: "public",
+  });
 
-  await migrate(db, { migrationsFolder });
+  if (migrations.length > 0) {
+    console.log(`Applied ${migrations.length} migration(s):`, migrations.map((m) => m.name).join(", "));
+  }
 
   console.log("Migrations complete");
 }
