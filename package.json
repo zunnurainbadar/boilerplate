@@ -8,6 +8,7 @@
     "dev:frontend": "npm run dev -w apps/frontend",
     "build:shared": "npm run build -w packages/shared",
     "build:utils": "npm run build -w packages/utils",
+    "build:pkgs": "npm run build:shared && npm run build:utils",
     "build:backend": "npm run build -w apps/backend",
     "build:frontend": "npm run build -w apps/frontend",
     "build": "npm run build:shared && npm run build:utils && npm run build:backend && npm run build:frontend",

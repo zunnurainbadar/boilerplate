@@ -30,7 +30,7 @@ export async function runMigrations(): Promise<void> {
   await bootstrap();
 
   const databaseUrl = process.env.DATABASE_URL ?? "postgresql://localhost:5432/ai_boilerplate";
-  const { runner } = await import("node-pg-migrate");
+  const { runner } = (await new Function("return import('node-pg-migrate')")()) as typeof import("node-pg-migrate");
 
   const migrations = await runner({
     databaseUrl,
